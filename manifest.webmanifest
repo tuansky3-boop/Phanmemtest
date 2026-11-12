@@ -1,0 +1,15 @@
+{
+  "name": "Ôn thi bằng lái C1",
+  "short_name": "Ôn thi C1",
+  "description": "Ôn tập lý thuyết và thi thử sát hạch GPLX hạng C1",
+  "lang": "vi",
+  "start_url": "./#/",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f3f6fb",
+  "theme_color": "#0f6fde",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

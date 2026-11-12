@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ôn thi bằng lái C1</title>
+  <meta name="description" content="Ôn tập lý thuyết, thi thử sát hạch giấy phép lái xe hạng C1 – tối ưu cho máy tính và điện thoại." />
+  <meta name="theme-color" content="#0f6fde" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/icon.svg" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    // Áp dụng theme & cỡ chữ trước khi vẽ để tránh nháy màn hình
+    try {
+      var s = JSON.parse(localStorage.getItem('c1:state') || '{}').settings || {};
+      if (s.theme && s.theme !== 'auto') document.documentElement.dataset.theme = s.theme;
+      if (s.fontScale) document.documentElement.style.setProperty('--fs', s.fontScale);
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Bỏ qua đến nội dung</a>
+
+  <div class="layout">
+    <!-- Sidebar (PC) -->
+    <aside class="sidebar" aria-label="Điều hướng chính">
+      <a class="brand" href="#/">
+        <span class="brand-logo" aria-hidden="true">C1</span>
+        <span><strong>Ôn thi C1</strong><small>Sát hạch lái xe tải</small></span>
+      </a>
+      <nav class="side-nav" id="sideNav"></nav>
+      <div class="side-foot">
+        <button class="btn ghost sm" data-action="toggle-theme" title="Đổi giao diện sáng/tối">
+          <span aria-hidden="true">🌓</span> Giao diện
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-wrap">
+      <!-- Top bar (mobile) -->
+      <header class="topbar" id="topbar">
+        <button class="icon-btn" id="backBtn" aria-label="Quay lại" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+        </button>
+        <h1 class="topbar-title" id="topTitle">Ôn thi C1</h1>
+        <div class="topbar-actions" id="topActions"></div>
+      </header>
+
+      <main id="main" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <!-- Bottom nav (mobile) -->
+  <nav class="bottom-nav" id="bottomNav" aria-label="Điều hướng"></nav>
+
+  <!-- Bottom sheet / Modal -->
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" hidden>
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/data/signs.js"></script>
+  <script src="js/data/scenes.js"></script>
+  <script src="js/data/questions.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
