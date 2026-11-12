@@ -40,6 +40,31 @@
       <path d="M46 56 L36 72"/><path d="M46 56 L56 70"/>
     </g>`;
 
+  const motorbike =
+    `<g fill="none" stroke="${BLK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="29" cy="62" r="10"/><circle cx="71" cy="62" r="10"/>
+      <path d="M29 62 L44 48 L62 48 L71 62"/><path d="M62 48 L66 36 L74 36"/></g>
+     <rect x="38" y="40" width="20" height="8" rx="3" fill="${BLK}"/>`;
+  const rearCar = (x, f) =>
+    `<g fill="${f}"><rect x="${x - 9}" y="33" width="18" height="12" rx="3"/><rect x="${x - 13}" y="43" width="26" height="15" rx="3"/>
+      <rect x="${x - 12}" y="57" width="6" height="7" rx="1"/><rect x="${x + 6}" y="57" width="6" height="7" rx="1"/></g>`;
+  const endLines = [-16, -8, 0, 8, 16].map((d) => {
+    const cx = 50 + d * 0.707, cy = 50 + d * 0.707;
+    return `<line x1="${cx - 21}" y1="${cy + 21}" x2="${cx + 21}" y2="${cy - 21}" stroke="${BLK}" stroke-width="2.5"/>`;
+  }).join('');
+  const roundabout = [0, 1, 2].map((k) => {
+    const r = 24, t0 = ((k * 120 + 15) * Math.PI) / 180, t1 = ((k * 120 + 95) * Math.PI) / 180;
+    const P = (t) => [50 + r * Math.cos(t), 50 - r * Math.sin(t)];
+    const [x0, y0] = P(t0), [x1, y1] = P(t1);
+    const tx = -Math.sin(t1), ty = -Math.cos(t1), nx = Math.cos(t1), ny = -Math.sin(t1);
+    const f = (v) => v.toFixed(1);
+    return `<path d="M${f(x0)} ${f(y0)} A${r} ${r} 0 0 0 ${f(x1)} ${f(y1)}" fill="none" stroke="#fff" stroke-width="7"/>` +
+      `<polygon points="${f(x1 + tx * 10)},${f(y1 + ty * 10)} ${f(x1 + nx * 8)},${f(y1 + ny * 8)} ${f(x1 - nx * 8)},${f(y1 - ny * 8)}" fill="#fff"/>`;
+  }).join('');
+  const houses =
+    `<rect x="4" y="20" width="92" height="60" rx="4" fill="#fff" stroke="${BLK}" stroke-width="3"/>
+     <g fill="${BLK}"><polygon points="14,70 14,50 24,40 34,50 34,70"/><polygon points="38,70 38,44 50,32 62,44 62,70"/><polygon points="66,70 66,52 76,42 86,52 86,70"/></g>`;
+
   const S = [
     // ===== Biển báo cấm =====
     { id: 'P101', code: 'P.101', group: 'cam', name: 'Đường cấm',
@@ -126,11 +151,87 @@
     { id: 'I423', code: 'I.423', group: 'chidan', name: 'Đường người đi bộ sang ngang',
       desc: 'Chỉ dẫn vị trí dành cho người đi bộ sang ngang đường.',
       svg: wrap(info(`<polygon points="50,14 88,84 12,84" fill="#fff"/>` + walker(BLK, 18, 28, 0.62))) },
+    // ===== Bổ sung =====
+    { id: 'P104', code: 'P.104', group: 'cam', name: 'Cấm xe máy',
+      desc: 'Cấm xe mô tô và xe gắn máy đi qua, trừ xe ưu tiên.',
+      svg: wrap(prohib(motorbike)) },
+    { id: 'P112', code: 'P.112', group: 'cam', name: 'Cấm người đi bộ',
+      desc: 'Cấm người đi bộ qua lại.',
+      svg: wrap(prohib(walker(BLK, 0, 4))) },
+    { id: 'P118', code: 'P.118', group: 'cam', name: 'Hạn chế chiều ngang xe',
+      desc: 'Cấm các xe có chiều ngang (kể cả hàng) vượt quá trị số ghi trên biển đi qua.',
+      svg: wrap(prohib(`<polygon points="15,42 25,50 15,58" fill="${BLK}"/><polygon points="85,42 75,50 85,58" fill="${BLK}"/>${text('2,5m', 19, BLK, 57)}`)) },
+    { id: 'P123b', code: 'P.123b', group: 'cam', name: 'Cấm rẽ phải',
+      desc: 'Cấm các loại xe rẽ phải tại nơi đường giao nhau.',
+      svg: wrap(prohib(`<g transform="translate(100 0) scale(-1 1)"><path d="M60 82 L60 50 Q60 40 50 40 L38 40 L38 30 L22 45 L38 60 L38 50 L48 50 Q50 50 50 52 L50 82 Z" fill="${BLK}"/></g>` + slash)) },
+    { id: 'P125', code: 'P.125', group: 'cam', name: 'Cấm vượt',
+      desc: 'Cấm các xe cơ giới vượt nhau; được vượt xe mô tô hai bánh, xe gắn máy.',
+      svg: wrap(prohib(rearCar(35, RED) + rearCar(65, BLK))) },
+    { id: 'P136', code: 'P.136', group: 'cam', name: 'Cấm đi thẳng',
+      desc: 'Cấm các loại xe đi thẳng, chỉ được rẽ trái hoặc rẽ phải.',
+      svg: wrap(prohib(`<g transform="translate(10 10) scale(.8)">${arrowUp(BLK)}</g>` + slash)) },
+    { id: 'DP127', code: 'DP.127', group: 'cam', name: 'Hết tốc độ tối đa cho phép',
+      desc: 'Báo hết đoạn đường hạn chế tốc độ tối đa; áp dụng tốc độ theo quy định chung.',
+      svg: wrap(`<circle cx="50" cy="50" r="45" fill="#fff" stroke="#666" stroke-width="3"/>${text('50', 38, '#888', 63)}${endLines}`) },
+    { id: 'DP135', code: 'DP.135', group: 'cam', name: 'Hết tất cả các lệnh cấm',
+      desc: 'Báo hết đoạn đường áp dụng các biển cấm đặt trước đó.',
+      svg: wrap(`<circle cx="50" cy="50" r="45" fill="#fff" stroke="#666" stroke-width="3"/>${endLines}`) },
+
+    { id: 'R302b', code: 'R.302b', group: 'hieulenh', name: 'Hướng phải đi vòng chướng ngại vật sang trái',
+      desc: 'Báo các loại xe phải đi vòng sang phía bên trái chướng ngại vật.',
+      svg: wrap(mand(`<g transform="rotate(-135 50 50)">${arrowUp('#fff')}</g>`)) },
+    { id: 'R303', code: 'R.303', group: 'hieulenh', name: 'Nơi giao nhau chạy theo vòng xuyến',
+      desc: 'Các xe phải đi vòng xuyến theo chiều mũi tên; nhường đường cho xe đi đến từ bên trái.',
+      svg: wrap(mand(roundabout)) },
+    { id: 'R307', code: 'R.307', group: 'hieulenh', name: 'Hết hạn chế tốc độ tối thiểu',
+      desc: 'Báo hết đoạn đường áp dụng tốc độ tối thiểu.',
+      svg: wrap(mand(text('30', 40, '#fff', 64) + `<line x1="80" y1="20" x2="20" y2="80" stroke="${RED}" stroke-width="7"/>`)) },
+    { id: 'R420', code: 'R.420', group: 'hieulenh', name: 'Bắt đầu khu đông dân cư',
+      desc: 'Bắt đầu khu đông dân cư; áp dụng tốc độ tối đa và các quy định trong khu đông dân cư.',
+      svg: wrap(houses) },
+    { id: 'R421', code: 'R.421', group: 'hieulenh', name: 'Hết khu đông dân cư',
+      desc: 'Hết khu đông dân cư; áp dụng tốc độ và quy định ngoài khu đông dân cư.',
+      svg: wrap(houses + `<line x1="10" y1="78" x2="90" y2="22" stroke="${RED}" stroke-width="6"/>`) },
+
+    { id: 'W202a', code: 'W.202a', group: 'nguyhiem', name: 'Nhiều chỗ ngoặt nguy hiểm liên tiếp (đầu tiên vòng trái)',
+      desc: 'Báo trước nhiều chỗ ngoặt liên tiếp, chỗ đầu tiên vòng sang trái.',
+      svg: wrap(warn(`<path d="M56 84 C56 72 42 72 42 62 C42 52 58 52 58 46" fill="none" stroke="${BLK}" stroke-width="7"/><polygon points="50,47 58,33 66,47" fill="${BLK}"/>`)) },
+    { id: 'W203b', code: 'W.203b', group: 'nguyhiem', name: 'Đường bị hẹp về phía phải',
+      desc: 'Báo trước đoạn đường bị thu hẹp về phía bên phải.',
+      svg: wrap(warn(`<g fill="none" stroke="${BLK}" stroke-width="6"><path d="M40 82 L40 38"/><path d="M62 82 L62 64 L54 54 L54 38"/></g>`)) },
+    { id: 'W205a', code: 'W.205a', group: 'nguyhiem', name: 'Đường giao nhau (cùng cấp)',
+      desc: 'Báo trước sắp đến nơi giao nhau của các tuyến đường cùng cấp.',
+      svg: wrap(warn(`<rect x="45" y="36" width="10" height="46" fill="${BLK}"/><rect x="28" y="54" width="44" height="10" fill="${BLK}"/>`)) },
+    { id: 'W207a', code: 'W.207a', group: 'nguyhiem', name: 'Giao nhau với đường không ưu tiên',
+      desc: 'Báo trước sắp đến nơi giao nhau với đường không ưu tiên; xe trên đường đang đi được ưu tiên.',
+      svg: wrap(warn(`<rect x="44" y="34" width="12" height="49" fill="${BLK}"/><rect x="26" y="58" width="48" height="4" fill="${BLK}"/>`)) },
+    { id: 'W209', code: 'W.209', group: 'nguyhiem', name: 'Giao nhau có tín hiệu đèn',
+      desc: 'Báo trước nơi giao nhau có điều khiển giao thông bằng tín hiệu đèn.',
+      svg: wrap(warn(`<rect x="41" y="34" width="18" height="48" rx="4" fill="${BLK}"/><circle cx="50" cy="44" r="5" fill="#e53935"/><circle cx="50" cy="58" r="5" fill="#ffb300"/><circle cx="50" cy="72" r="5" fill="#43a047"/>`)) },
+    { id: 'W219', code: 'W.219', group: 'nguyhiem', name: 'Dốc xuống nguy hiểm',
+      desc: 'Báo trước sắp đến đoạn dốc xuống nguy hiểm; về số thấp, dùng phanh động cơ.',
+      svg: wrap(warn(`<polygon points="22,58 78,82 22,82" fill="${BLK}"/>${text('10%', 13, BLK, 62).replace('x="50"', 'x="58"')}`)) },
+    { id: 'W220', code: 'W.220', group: 'nguyhiem', name: 'Dốc lên nguy hiểm',
+      desc: 'Báo trước sắp đến đoạn dốc lên nguy hiểm.',
+      svg: wrap(warn(`<polygon points="78,58 22,82 78,82" fill="${BLK}"/>${text('10%', 13, BLK, 62).replace('x="50"', 'x="42"')}`)) },
+    { id: 'W225', code: 'W.225', group: 'nguyhiem', name: 'Trẻ em',
+      desc: 'Báo trước gần trường học, nơi trẻ em hay qua lại; giảm tốc độ, chú ý quan sát.',
+      svg: wrap(warn(walker(BLK, 6, 36, 0.6) + walker(BLK, 30, 42, 0.5))) },
+    { id: 'W233', code: 'W.233', group: 'nguyhiem', name: 'Nguy hiểm khác',
+      desc: 'Báo trước có nguy hiểm mà không có biển riêng; cần chú ý, giảm tốc độ.',
+      svg: wrap(warn(text('!', 46, BLK, 80))) },
+    { id: 'W242a', code: 'W.242a', group: 'nguyhiem', name: 'Nơi đường sắt giao vuông góc với đường bộ',
+      desc: 'Đặt ngay trước nơi giao nhau với đường sắt không có rào chắn; phải dừng lại quan sát nếu có tàu.',
+      svg: wrap(`<g transform="rotate(35 50 50)"><rect x="4" y="42" width="92" height="16" fill="#fff" stroke="${RED}" stroke-width="4"/></g><g transform="rotate(-35 50 50)"><rect x="4" y="42" width="92" height="16" fill="#fff" stroke="${RED}" stroke-width="4"/></g>`) },
+
+    { id: 'I409', code: 'I.409', group: 'chidan', name: 'Chỗ quay xe',
+      desc: 'Chỉ dẫn vị trí được phép quay đầu xe.',
+      svg: wrap(info(`<path d="M62 80 L62 42 Q62 26 48 26 Q34 26 34 42 L34 56" fill="none" stroke="#fff" stroke-width="9"/><polygon points="22,54 46,54 34,72" fill="#fff"/>`)) },
   ];
 
   const GROUPS = {
     cam: { name: 'Biển báo cấm', hint: 'Hình tròn, viền đỏ, nền trắng (hoặc xanh)' },
-    hieulenh: { name: 'Biển hiệu lệnh', hint: 'Hình tròn, nền xanh, hình vẽ trắng' },
+    hieulenh: { name: 'Biển hiệu lệnh', hint: 'Phần lớn hình tròn, nền xanh, hình vẽ trắng' },
     nguyhiem: { name: 'Biển nguy hiểm & cảnh báo', hint: 'Tam giác, viền đỏ, nền vàng' },
     chidan: { name: 'Biển chỉ dẫn', hint: 'Hình vuông/chữ nhật, nền xanh (hoặc hình thoi vàng)' },
   };

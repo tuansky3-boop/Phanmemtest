@@ -27,7 +27,7 @@ Hoặc deploy thư mục này lên GitHub Pages / Netlify / Vercel.
 Ngoài ra: dark mode tự động, `prefers-reduced-motion`, điều hướng bàn phím/screen reader, lưu tiến độ trong `localStorage`.
 
 ## Bộ câu hỏi
-`js/data/questions.js` chứa **72 câu mẫu** biên soạn theo Luật TTATGTĐB 2024 — **không phải** nguyên văn bộ 600 câu chính thức. Để ôn đúng ngân hàng đề, nạp file JSON trong **Cài đặt → Nhập bộ đề**:
+`js/data/questions.js` chứa **167 câu mẫu** biên soạn theo Luật TTATGTĐB 2024 — **không phải** nguyên văn bộ 600 câu chính thức. Để ôn đúng ngân hàng đề, nạp file JSON trong **Cài đặt → Nhập bộ đề**:
 ```json
 [{ "id": 1, "ch": 1, "q": "Câu hỏi", "a": ["Đáp án 1", "Đáp án 2"], "c": 0, "dl": false, "exp": "Giải thích", "img": "https://..." }]
 ```

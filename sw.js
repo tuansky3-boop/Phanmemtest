@@ -1,5 +1,5 @@
 /* Service worker: cache tĩnh để dùng offline */
-const CACHE = 'c1-v1';
+const CACHE = 'c1-v2';
 const ASSETS = ['./', 'index.html', 'css/styles.css', 'js/app.js', 'js/data/questions.js', 'js/data/signs.js', 'js/data/scenes.js', 'manifest.webmanifest', 'assets/icon.svg'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS))); self.skipWaiting(); });
 self.addEventListener('activate', (e) => {
