@@ -32,6 +32,7 @@
     settings: { theme: 'auto', fontScale: 1, autoNext: false, haptics: true, shuffleAns: false },
   });
   const load = (k, fb) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fb; } catch (e) { return fb; } };
+  const del = (k) => { try { localStorage.removeItem(k); } catch (e) {} };
   const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   let state = Object.assign(defaults(), load(STORE_KEY, {}));
   state.settings = Object.assign(defaults().settings, state.settings);
@@ -542,7 +543,7 @@
     state.exams.push(rec);
     if (state.exams.length > 50) state.exams.shift();
     persist();
-    localStorage.removeItem(EXAM_KEY);
+    del(EXAM_KEY);
     location.hash = '#/exam/result?i=' + (state.exams.length - 1);
   }
 
@@ -775,7 +776,7 @@
       } catch (err) { toast('❌ Lỗi: ' + err.message); }
     };
     $('#exportBank').onclick = () => download('bo-de-c1.json', BANK);
-    $('#resetBank') && ($('#resetBank').onclick = () => { localStorage.removeItem(BANK_KEY); loadBank(); state.answers = {}; state.flags = {}; persist(); toast('Đã dùng lại bộ câu hỏi mẫu'); viewSettings(main); });
+    $('#resetBank') && ($('#resetBank').onclick = () => { del(BANK_KEY); loadBank(); state.answers = {}; state.flags = {}; persist(); toast('Đã dùng lại bộ câu hỏi mẫu'); viewSettings(main); });
     $('#backup').onclick = () => download('tien-do-c1.json', state);
     $('#restoreFile').onchange = async (e) => {
       const f = e.target.files[0]; if (!f) return;
@@ -786,7 +787,7 @@
       <div class="sheet-actions"><button class="btn ghost" data-close>Huỷ</button><button class="btn danger" id="okReset">Xoá</button></div>`, (el) => {
       $('#okReset', el).onclick = () => {
         const settings = state.settings; state = defaults(); state.settings = settings; persist();
-        Object.keys(localStorage).filter((k) => k.startsWith('c1:pos:') || k === EXAM_KEY).forEach((k) => localStorage.removeItem(k));
+        (() => { try { return Object.keys(localStorage); } catch (e) { return []; } })().filter((k) => k.startsWith('c1:pos:') || k === EXAM_KEY).forEach((k) => del(k));
         closeSheet(); toast('Đã xoá tiến độ'); viewSettings(main);
       };
     });
